@@ -78,12 +78,26 @@ WSGI_APPLICATION = "AssistDoc.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+
+# settings.py
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "postgres",  # Le nom de la base de données est 'postgres' comme indiqué
+        "USER": "postgres.hmgkxpaswqbzddptyugh", # Votre nom d'utilisateur Supabase
+        "PASSWORD": "JTe$C5a@DaXu5ZUE", 
+        "HOST": "aws-0-eu-central-1.pooler.supabase.com", # Votre hôte Supabase
+        "PORT": "6543",            # Le port Supabase
     }
 }
+
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 
 # Password validation
