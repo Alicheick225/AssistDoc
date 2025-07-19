@@ -62,8 +62,12 @@ class Patient(models.Model):
     gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female'), ('O', 'Other')])
     birth_date = models.DateField(null=True, blank=True)
     address = models.TextField(null=True, blank=True)
-    antecedents = models.TextField(blank=True, null=True)  # Medical history
-    allergies = models.TextField(blank=True, null=True)  # Allergies    
+    diseases = models.TextField(blank=True, null=True)  # Medical conditions
+    surgeries = models.TextField(blank=True, null=True)  # Past surgeries*
+    vaccines = models.TextField(blank=True, null=True)  # Vaccination history
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
+    allergies = models.TextField(blank=True, null=True)  # Allergies
+    actual_medecines = models.TextField(blank=True, null=True)  # Current medications    
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.social_security_number})"
