@@ -55,7 +55,7 @@ class Hospital(models.Model):
         verbose_name_plural = "Hospitals"
 
 class Patient(models.Model):
-    unique_platform_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    social_security_number = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     first_name = models.CharField(max_length=100)
     birth_date = models.DateField()
@@ -71,56 +71,186 @@ class Patient(models.Model):
         verbose_name = "Patient"
         verbose_name_plural = "Patients"
 
-class MedicalRecord(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='medical_records')
-    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='medical_records')
-    doctor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_records')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
-    ENTRY_TYPE_CHOICES = (
-        ('consultation', 'Consultation'),
-        ('lab_exam', 'Lab Exam'),
-        ('medical_imaging', 'Medical Imaging'),
-        ('prescription', 'Prescription'),
-        ('diagnosis', 'Diagnosis'),
-        ('clinical_note', 'Clinical Note'),
-    )
-    entry_type = models.CharField(max_length=20, choices=ENTRY_TYPE_CHOICES)
-    textual_content = models.TextField(blank=True, null=True)
-    attached_file = models.FileField(upload_to='medical_records/', blank=True, null=True)
-    diagnosis_code = models.CharField(max_length=50, blank=True, null=True)
+class Constant(models.Model):
+    name = models.CharField(max_length=100)
+    value = models.CharField(max_length=100)
+    unit = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
-        return f"Record for {self.patient.last_name} ({self.entry_type}) - {self.created_at.strftime('%Y-%m-%d')}"
+        return f"{self.name}: {self.value} {self.unit or ''}"
 
     class Meta:
-        verbose_name = "Medical Record"
-        verbose_name_plural = "Medical Records"
-        ordering = ['-created_at']
+        verbose_name = "Constant"
+        verbose_name_plural = "Constants"
+
+class Symptom(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Symptom"
+        verbose_name_plural = "Symptoms"
+
+class Consultation(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='consultations')
+    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='consultations_hospital')
+    doctor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='performed_consultations')
+    
+    consultation_date = models.DateTimeField(auto_now_add=True)
+    consultation_reason = models.TextField()
+    clinical_exam = models.TextField(blank=True, null=True)
+    initial_diagnosis = models.TextField(blank=True, null=True)
+    
+    constants = models.ManyToManyField(Constant, related_name='consultations', blank=True)
+    symptoms = models.ManyToManyField(Symptom, related_name='consultations', blank=True)
+
+    def __str__(self):
+        return f"Consultation for {self.patient.last_name} on {self.consultation_date.strftime('%Y-%m-%d')}"
+
+    class Meta:
+        verbose_name = "Consultation"
+        verbose_name_plural = "Consultations"
+        ordering = ['-consultation_date']
+
+
+class Diagnostic(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='diagnostics')
+    hopital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='diagnostics_hopital')
+    medecin = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='diagnostics_poses')
+    
+    date_diagnostic = models.DateTimeField(auto_now_add=True)
+    
+    # Lien optionnel vers la consultation qui a mené à ce diagnostic
+    consultation = models.ForeignKey(Consultation, on_delete=models.SET_NULL, null=True, blank=True, related_name='diagnostics_associes')
+    
+    # Code de diagnostic (ex: CIM-10) et description
+    code_cim = models.CharField(max_length=50, blank=True, null=True)
+    description = models.TextField()
+    
+    # Statut du diagnostic (ex: provisoire, définitif, réfuté)
+    STATUT_CHOICES = (
+        ('provisoire', 'Provisoire'),
+        ('definitif', 'Définitif'),
+        ('refute', 'Réfuté'),
+    )
+    statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default='provisoire')
+
+    def __str__(self):
+        return f"Diagnostic pour {self.patient.nom}: {self.description}"
+
+    class Meta:
+        verbose_name = "Diagnostic"
+        verbose_name_plural = "Diagnostics"
+        ordering = ['-date_diagnostic']
+
+
+
+class Prescription(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='prescriptions')
+    hopital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='prescriptions_hopital')
+    medecin = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='prescriptions_faites')
+    
+    date_prescription = models.DateTimeField(auto_now_add=True)
+    
+    # Lien optionnel vers la consultation ou le diagnostic qui a mené à cette prescription
+    consultation = models.ForeignKey(Consultation, on_delete=models.SET_NULL, null=True, blank=True, related_name='prescriptions_associees')
+    diagnostic = models.ForeignKey(Diagnostic, on_delete=models.SET_NULL, null=True, blank=True, related_name='prescriptions_associees')
+
+    medicament = models.CharField(max_length=255)
+    dosage = models.CharField(max_length=100)
+    frequence = models.CharField(max_length=100)
+    duree = models.CharField(max_length=100)
+    instructions = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Prescription de {self.medicament} pour {self.patient.nom}"
+
+    class Meta:
+        verbose_name = "Prescription"
+        verbose_name_plural = "Prescriptions"
+        ordering = ['-date_prescription']
+
+
+class ExamenLaboratoire(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='examens_laboratoire')
+    hopital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='examens_laboratoire_hopital')
+    medecin_prescripteur = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='examens_prescrits')
+    
+    date_demande = models.DateTimeField(auto_now_add=True)
+    date_resultat = models.DateTimeField(null=True, blank=True)
+    
+    type_examen = models.CharField(max_length=100) # Ex: "Hémogramme", "Glycémie"
+    resultats_textuels = models.TextField(blank=True, null=True) # Pour des résultats simples
+    fichier_resultats = models.FileField(upload_to='lab_results/', blank=True, null=True) # Pour rapports PDF
+
+    # Vous pouvez ajouter un champ pour les valeurs normales, unités, etc.
+
+    def __str__(self):
+        return f"Examen Labo {self.type_examen} pour {self.patient.nom}"
+
+    class Meta:
+        verbose_name = "Examen Laboratoire"
+        verbose_name_plural = "Examens Laboratoire"
+        ordering = ['-date_resultat', '-date_demande']
+
+
+class ImagerieMedicale(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='imageries_medicales')
+    hopital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='imageries_medicales_hopital')
+    medecin_prescripteur = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='imageries_prescrites')
+    
+    date_examen = models.DateTimeField(auto_now_add=True)
+    type_imagerie = models.CharField(max_length=100, choices=[('radio', 'Radiographie'), ('irm', 'IRM'), ('scanner', 'Scanner'), ('echo', 'Échographie')])
+    rapport_textuel = models.TextField(blank=True, null=True)
+    fichier_imagerie = models.FileField(upload_to='medical_imaging/', blank=True, null=True) # Pour les images DICOM ou JPG/PNG
+    
+    def __str__(self):
+        return f"{self.type_imagerie} pour {self.patient.nom}"
+
+    class Meta:
+        verbose_name = "Imagerie Médicale"
+        verbose_name_plural = "Imageries Médicales"
+        ordering = ['-date_examen']
+
 
 class AIRecommendation(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='ai_recommendations')
-    medical_record_entry = models.ForeignKey(MedicalRecord, on_delete=models.CASCADE, related_name='generated_recommendations')
-    consulting_doctor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='received_recommendations')
+    
+    # Liens optionnels vers les événements spécifiques qui ont pu générer la recommandation
+    consultation_source = models.ForeignKey(Consultation, on_delete=models.SET_NULL, null=True, blank=True, related_name='ai_recos_from_consult')
+    diagnostic_source = models.ForeignKey(Diagnostic, on_delete=models.SET_NULL, null=True, blank=True, related_name='ai_recos_from_diag')
+    examen_labo_source = models.ForeignKey(ExamenLaboratoire, on_delete=models.SET_NULL, null=True, blank=True, related_name='ai_recos_from_lab')
+    
+    # Le médecin à qui la recommandation a été présentée (pour traçabilité)
+    medecin_consultant = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='received_ai_recommendations')
+    
     generated_at = models.DateTimeField(auto_now_add=True)
 
     RECOMMENDATION_TYPE_CHOICES = (
-        ('differential_diagnosis', 'Differential Diagnosis'),
+        ('diagnostic_diff', 'Diagnostic Différentiel'),
         ('suggested_treatment_plan', 'Suggested Treatment Plan'),
         ('additional_exams', 'Additional Exams'),
         ('risk_prevention', 'Risk Prevention'),
         ('follow_up', 'Follow-up Recommendation'),
+        ('info_medicale_pertinente', 'Information Médicale Pertinente') # Ajout possible
     )
     recommendation_type = models.CharField(max_length=50, choices=RECOMMENDATION_TYPE_CHOICES)
     recommendation_content = models.TextField()
+    
+    # Métadonnées de la recommandation (ex: score de confiance de l'IA)
+    confidence_score = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, help_text="Score de confiance de l'IA pour cette recommandation (0-100%)")
+
     recommendation_accepted = models.BooleanField(default=False)
     doctor_comments = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"AI Recommendation for {self.patient.last_name} ({self.recommendation_type})"
+        return f"Recommandation IA pour {self.patient.nom} ({self.recommendation_type})"
 
     class Meta:
-        verbose_name = "AI Recommendation"
-        verbose_name_plural = "AI Recommendations"
+        verbose_name = "Recommandation IA"
+        verbose_name_plural = "Recommandations IA"
         ordering = ['-generated_at']
