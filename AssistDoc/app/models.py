@@ -66,7 +66,7 @@ class Patient(models.Model):
     allergies = models.TextField(blank=True, null=True)  # Allergies    
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.unique_platform_id})"
+        return f"{self.first_name} {self.last_name} ({self.social_security_number})"
 
     class Meta:
         verbose_name = "Patient"

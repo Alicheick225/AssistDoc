@@ -1,0 +1,152 @@
+<html>
+    <head>
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+        <link
+        rel="stylesheet"
+        as="style"
+        onload="this.rel='stylesheet'"
+        href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
+        />
+
+        <title>Stitch Design</title>
+        <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    </head>
+    <body>
+        <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style='font-family: Inter, "Noto Sans", sans-serif;'>
+        <div class="layout-container flex h-full grow flex-col">
+            <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f3f4] px-10 py-3">
+            <div class="flex items-center gap-4 text-[#111518]">
+                <div class="size-4">
+                <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                    d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z"
+                    fill="currentColor"
+                    ></path>
+                </svg>
+                </div>
+                <h2 class="text-[#111518] text-lg font-bold leading-tight tracking-[-0.015em]">HealthAI</h2>
+            </div>
+            <div class="flex flex-1 justify-end gap-8">
+                <div class="flex items-center gap-9">
+                <a class="text-[#111518] text-sm font-medium leading-normal" href="#">Dashboard</a>
+                <a class="text-[#111518] text-sm font-medium leading-normal" href="#">Patients</a>
+                <a class="text-[#111518] text-sm font-medium leading-normal" href="#">Consultations</a>
+                <a class="text-[#111518] text-sm font-medium leading-normal" href="#">Resources</a>
+                </div>
+                <button
+                class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#f0f3f4] text-[#111518] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
+                >
+                <div class="text-[#111518]" data-icon="Bell" data-size="20px" data-weight="regular">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                    <path
+                        d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"
+                    ></path>
+                    </svg>
+                </div>
+                </button>
+                <div
+                class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDkkZiJ7QJNaKoGVXGtbw8CJJadRGweeNeQ6VNNcMqt1ZSSYHpcVD03l7aT3__3LcQq976qudN_14rbGy70siD-0RG-l0z4USr5fV9fOFFWo0yOlpoepZpIT8VJZCIOa3InwCs50J37IMFGOwtjJ6m5QxzG4oVjVfdl98dvTEAFlV3MTJr09Ud9eqxGZlJvoCEv4po9KJPthmU7vuK3i8O_Vuu855ES80VbXY0BrWjaS4_EVfg8FxyznePrYkfvfi8wVaOWpWEu7A");'
+                ></div>
+            </div>
+            </header>
+            <div class="gap-1 px-6 flex flex-1 justify-center py-5">
+            <div class="layout-content-container flex flex-col max-w-[920px] flex-1">
+                <div class="flex flex-wrap justify-between gap-3 p-4">
+                <div class="flex min-w-72 flex-col gap-3">
+                    <p class="text-[#111518] tracking-light text-[32px] font-bold leading-tight">Consultation Summary</p>
+                    <p class="text-[#637988] text-sm font-normal leading-normal">
+                    Review the AI-generated diagnosis and prescription recommendation. You can verify, modify, and validate before finalizing.
+                    </p>
+                </div>
+                </div>
+                <h2 class="text-[#111518] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">AI Diagnosis</h2>
+                <p class="text-[#111518] text-base font-normal leading-normal pb-3 pt-1 px-4">
+                Based on the patient's symptoms and medical history, the AI suggests a diagnosis of Seasonal Allergies. The AI has considered factors such as the time of year,
+                reported symptoms like sneezing, itchy eyes, and runny nose, and the patient's history of mild asthma. The AI has ruled out other potential diagnoses such as the
+                common cold due to the absence of fever and muscle aches.
+                </p>
+                <h2 class="text-[#111518] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Prescription Recommendation</h2>
+                <p class="text-[#111518] text-base font-normal leading-normal pb-3 pt-1 px-4">
+                The AI recommends a prescription of over-the-counter antihistamines like Loratadine, to be taken once daily for 14 days. Additionally, the AI suggests using a nasal
+                saline spray to alleviate nasal congestion. The AI has considered the patient's mild asthma and has selected an antihistamine with a low risk of drowsiness. The AI
+                advises the patient to avoid known allergens and to consult if symptoms persist or worsen after 14 days.
+                </p>
+                <div class="flex justify-stretch">
+                <div class="flex flex-1 gap-3 flex-wrap px-4 py-3 justify-end">
+                    <button
+                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#f0f3f4] text-[#111518] text-sm font-bold leading-normal tracking-[0.015em]"
+                    >
+                    <span class="truncate">Modify</span>
+                    </button>
+                    <button
+                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#1993e5] text-white text-sm font-bold leading-normal tracking-[0.015em]"
+                    >
+                    <span class="truncate">Validate</span>
+                    </button>
+                </div>
+                </div>
+            </div>
+            <div class="layout-content-container flex flex-col w-[360px]">
+                <h2 class="text-[#111518] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Patient Information</h2>
+                <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+                <div
+                    class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-14 w-fit"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD8xkGyyk_VcEl_kpB_2udT-oWbi6xKyGfcw9XUDN9j9qU1fUfoN8iUG0vcg2aWUyGToURRCcGHCRtV3B0srlfZvr1l_AUU2VnyD9ZM0MKW0sOcj0ZELaQcnOJXv8A-us7b3XRWcCpLzlxVxd-D2k2K0LLRJKlcqqxJEqR5aX1g8V46E8a0QNis7EIQzX_b8bPxOzTDWmX5206C2sY82XnyMfp-Cyh7u2EUMahz5o6seCmpzDSktmgA8lb162UMAmhLjDPgmFwHvw");'
+                ></div>
+                <div class="flex flex-col justify-center">
+                    <p class="text-[#111518] text-base font-medium leading-normal line-clamp-1">Sophia Clark</p>
+                    <p class="text-[#637988] text-sm font-normal leading-normal line-clamp-2">ID: 123456789</p>
+                </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+                <div class="flex flex-col justify-center">
+                    <p class="text-[#111518] text-base font-medium leading-normal line-clamp-1">Date of Birth: 1995-05-15</p>
+                    <p class="text-[#637988] text-sm font-normal leading-normal line-clamp-2">Age: 28</p>
+                </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+                <div class="flex flex-col justify-center">
+                    <p class="text-[#111518] text-base font-medium leading-normal line-clamp-1">Gender</p>
+                    <p class="text-[#637988] text-sm font-normal leading-normal line-clamp-2">Female</p>
+                </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+                <div class="flex flex-col justify-center">
+                    <p class="text-[#111518] text-base font-medium leading-normal line-clamp-1">Blood Type</p>
+                    <p class="text-[#637988] text-sm font-normal leading-normal line-clamp-2">O+</p>
+                </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+                <div class="flex flex-col justify-center">
+                    <p class="text-[#111518] text-base font-medium leading-normal line-clamp-1">Allergies</p>
+                    <p class="text-[#637988] text-sm font-normal leading-normal line-clamp-2">No known allergies</p>
+                </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+                <div class="flex flex-col justify-center">
+                    <p class="text-[#111518] text-base font-medium leading-normal line-clamp-1">Medical History</p>
+                    <p class="text-[#637988] text-sm font-normal leading-normal line-clamp-2">Mild asthma</p>
+                </div>
+                </div>
+                <h2 class="text-[#111518] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Consultation Details</h2>
+                <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+                <div class="flex flex-col justify-center">
+                    <p class="text-[#111518] text-base font-medium leading-normal line-clamp-1">Date and Time</p>
+                    <p class="text-[#637988] text-sm font-normal leading-normal line-clamp-2">2024-07-26 10:30 AM</p>
+                </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+                <div class="flex flex-col justify-center">
+                    <p class="text-[#111518] text-base font-medium leading-normal line-clamp-1">Reported Symptoms</p>
+                    <p class="text-[#637988] text-sm font-normal leading-normal line-clamp-2">Sneezing, itchy eyes, runny nose</p>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </body>
+</html>

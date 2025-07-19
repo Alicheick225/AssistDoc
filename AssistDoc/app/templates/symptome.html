@@ -1,0 +1,148 @@
+{% load date_filters %}
+<html>
+    <head>
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+        <link
+        rel="stylesheet"
+        as="style"
+        onload="this.rel='stylesheet'"
+        href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Public+Sans%3Awght%40400%3B500%3B700%3B900"
+        />
+
+        <title>Stitch Design</title>
+        <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    </head>
+    <body>
+        <div class="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden" style='font-family: "Public Sans", "Noto Sans", sans-serif;'>
+        <div class="layout-container flex h-full grow flex-col">
+            <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7eef3] px-10 py-3">
+                <div class="flex items-center gap-4 text-[#0e161b]">
+                <div class="size-4">
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z"
+                        fill="currentColor"
+                    ></path>
+                    </svg>
+                </div>
+                <h2 class="text-[#0e161b] text-lg font-bold leading-tight tracking-[-0.015em]">AssistDoc</h2>
+                </div>
+                <div class="flex flex-1 justify-end gap-8">
+                <div class="flex items-center gap-9">
+                    <a class="text-[#0e161b] text-sm font-medium leading-normal" href="#">Dashboard</a>
+                    <a class="text-[#0e161b] text-sm font-medium leading-normal" href="#">Patients</a>
+                    <a class="text-[#0e161b] text-sm font-medium leading-normal" href="#">Consultations</a> 
+                    <a class="text-[#0e161b] text-sm font-medium leading-normal" href="#">Settings</a>
+                </div>
+                <div
+                    class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD4IeuR_ANLJhx03zJTLacex8X8G1IjOun-Ru4UIrM25GoNeReHc9B3j7jzI5koNzZ1obmozgEhwuhOKl9gHf8hsFc242JiygCY0KKQv8K9xsiKD0sSxgGIpjqsJIV9m6ofekd-AfHZJP6PypjfLDsOZ-52tUpmufZ6vLTVnW-CsbsWzs556nwEXSjhcty1BIULRzPfnta6khN1NCosPgw1z3e-noY3cNqN7SPksyxx7hfHPTKFwdY7vF5Z_52sYiDxe7nEPj8ffaQ");'
+                ></div>
+                </div>
+            </header>
+            <div class="gap-1 px-6 flex flex-1 justify-center py-5">
+            <div class="layout-content-container flex flex-col max-w-[920px] flex-1">
+                <div class="flex flex-wrap justify-between gap-3 p-4"><p class="text-[#0e161b] tracking-light text-[32px] font-bold leading-tight min-w-72">Patient Symptoms</p></div>
+                <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                </div>
+                <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 py-6">
+                        <!-- Tension artérielle -->
+                        <label class="flex flex-col">
+                            <span class="text-[#0e161b] font-medium">Tension Artérielle</span>
+                            <span class="text-sm text-[#4e7a97] mb-1">Mesure de la pression artérielle. Ex : 120/80 mmHg</span>
+                            <input type="text" name="tension_arterielle" placeholder="120/80 mmHg" class="form-input rounded-lg border border-[#d0dee7] bg-slate-50 p-2" />
+                        </label>
+
+                        <!-- Fréquence cardiaque -->
+                        <label class="flex flex-col">
+                            <span class="text-[#0e161b] font-medium">Fréquence Cardiaque</span>
+                            <span class="text-sm text-[#4e7a97] mb-1">Nombre de battements par minute. Ex : 72 bpm</span>
+                            <input type="text" name="frequence_cardiaque" placeholder="72 bpm" class="form-input rounded-lg border border-[#d0dee7] bg-slate-50 p-2" />
+                        </label>
+
+                        <!-- Température -->
+                        <label class="flex flex-col">
+                            <span class="text-[#0e161b] font-medium">Température</span>
+                            <span class="text-sm text-[#4e7a97] mb-1">Température corporelle. Ex : 37.0°C</span>
+                            <input type="text" name="temperature" placeholder="37.0°C" class="form-input rounded-lg border border-[#d0dee7] bg-slate-50 p-2" />
+                        </label>
+
+                        <!-- Poids -->
+                        <label class="flex flex-col">
+                            <span class="text-[#0e161b] font-medium">Poids (kg)</span>
+                            <span class="text-sm text-[#4e7a97] mb-1">Essentiel pour calculer l'IMC. Ex : 75</span>
+                            <input type="number" step="0.1" name="poids_kg" placeholder="75" class="form-input rounded-lg border border-[#d0dee7] bg-slate-50 p-2" />
+                        </label>
+
+                        <!-- Taille -->
+                        <label class="flex flex-col">
+                            <span class="text-[#0e161b] font-medium">Taille (cm)</span>
+                            <span class="text-sm text-[#4e7a97] mb-1">Essentiel pour calculer l'IMC. Ex : 180</span>
+                            <input type="number" name="taille_cm" placeholder="180" class="form-input rounded-lg border border-[#d0dee7] bg-slate-50 p-2" />
+                        </label>
+
+                        <!-- Saturation O2 -->
+                        <label class="flex flex-col">
+                            <span class="text-[#0e161b] font-medium">Saturation O2</span>
+                            <span class="text-sm text-[#4e7a97] mb-1">Pourcentage d’oxygène dans le sang. Ex : 98%</span>
+                            <input type="text" name="saturation_o2" placeholder="98%" class="form-input rounded-lg border border-[#d0dee7] bg-slate-50 p-2" />
+                        </label>
+                    </div>
+                    <label class="flex flex-col min-w-40 flex-1">
+                        <p class="text-[#0e161b] text-base font-medium leading-normal pb-2">Symptoms</p>
+                        <textarea
+                        placeholder="Enter the patient's detailed symptoms. Ex: Crushing chest pain radiating to the left arm for 2 hours"
+                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e161b] focus:outline-0 focus:ring-0 border border-[#d0dee7] bg-slate-50 focus:border-[#d0dee7] min-h-36 placeholder:text-[#4e7a97] p-[15px] text-base font-normal leading-normal"
+                        ></textarea>
+                    </label>
+                </div>
+                <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+                    <label class="flex flex-col min-w-40 flex-1">
+                        <p class="text-[#0e161b] text-base font-medium leading-normal pb-2">Additional Notes</p>
+                        <textarea
+                        placeholder="Any additional information about the patient's condition"
+                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e161b] focus:outline-0 focus:ring-0 border border-[#d0dee7] bg-slate-50 focus:border-[#d0dee7] min-h-36 placeholder:text-[#4e7a97] p-[15px] text-base font-normal leading-normal"
+                        ></textarea>
+                    </label>
+                </div>
+                <div class="flex px-4 py-3 justify-end">
+                <button
+                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#1993e5] text-slate-50 text-sm font-bold leading-normal tracking-[0.015em]"
+                >
+                    <span class="truncate">Submit</span>
+                </button>
+                </div>
+            </div>
+            <div class="layout-content-container flex flex-col w-[360px]">
+                <h2 class="text-[#0e161b] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Patient Information</h2>
+                <div class="p-4 grid grid-cols-[20%_1fr] gap-x-6">
+                <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#d0dee7] py-5">
+                    <p class="text-[#4e7a97] text-sm font-normal leading-normal">Patient</p>
+                    <p class="text-[#0e161b] text-sm font-normal leading-normal">{{ patient.first_name }} {{ patient.last_name }}</p>
+                </div>
+                <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#d0dee7] py-5">
+                    <p class="text-[#4e7a97] text-sm font-normal leading-normal">Age</p>
+                    <p class="text-[#0e161b] text-sm font-normal leading-normal">{{ patient.birth_date|age }} ans</p>
+                </div>
+                <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#d0dee7] py-5">
+                    <p class="text-[#4e7a97] text-sm font-normal leading-normal">Weight</p>
+                    <p class="text-[#0e161b] text-sm font-normal leading-normal">{{ patient.weight }}</p>
+                </div>
+                <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#d0dee7] py-5">
+                    <p class="text-[#4e7a97] text-sm font-normal leading-normal">Height</p>
+                    <p class="text-[#0e161b] text-sm font-normal leading-normal">{{ patient.height }}</p>
+                </div>
+                <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#d0dee7] py-5">
+                    <p class="text-[#4e7a97] text-sm font-normal leading-normal">Medical History</p>
+                    <p class="text-[#0e161b] text-sm font-normal leading-normal">{{ patient.medical_history }}</p>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </body>
+</html>
