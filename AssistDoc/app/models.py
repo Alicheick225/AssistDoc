@@ -60,9 +60,10 @@ class Patient(models.Model):
     first_name = models.CharField(max_length=100)
     birth_date = models.DateField()
     gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female'), ('O', 'Other')])
-    age = models.PositiveIntegerField(null=True, blank=True)
-    weight = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-    height = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    antecedents = models.TextField(blank=True, null=True)  # Medical history
+    allergies = models.TextField(blank=True, null=True)  # Allergies    
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.unique_platform_id})"
@@ -72,17 +73,6 @@ class Patient(models.Model):
         verbose_name_plural = "Patients"
 
 
-class Constant(models.Model):
-    name = models.CharField(max_length=100)
-    value = models.CharField(max_length=100)
-    unit = models.CharField(max_length=50, blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.name}: {self.value} {self.unit or ''}"
-
-    class Meta:
-        verbose_name = "Constant"
-        verbose_name_plural = "Constants"
 
 class Symptom(models.Model):
     name = models.CharField(max_length=100)
@@ -99,14 +89,18 @@ class Consultation(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='consultations')
     hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='consultations_hospital')
     doctor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='performed_consultations')
-    
     consultation_date = models.DateTimeField(auto_now_add=True)
     consultation_reason = models.TextField()
     clinical_exam = models.TextField(blank=True, null=True)
     initial_diagnosis = models.TextField(blank=True, null=True)
-    
-    constants = models.ManyToManyField(Constant, related_name='consultations', blank=True)
+    tension = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Tension artérielle
+    temperature = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)  # Température corporelle
+    heart_rate = models.PositiveIntegerField(null=True, blank=True)  # Fréquence cardiaque    height = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Taille du patient
+    weight = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Poids du patient
+    height = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Taille du patient
+    oxygen_saturation = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Saturation en oxygène
     symptoms = models.ManyToManyField(Symptom, related_name='consultations', blank=True)
+
 
     def __str__(self):
         return f"Consultation for {self.patient.last_name} on {self.consultation_date.strftime('%Y-%m-%d')}"
