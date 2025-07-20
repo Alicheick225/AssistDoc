@@ -84,22 +84,22 @@
                 <div class="p-4 grid grid-cols-[20%_1fr] gap-x-6">
                 <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce1e5] py-5">
                     <p class="text-[#637988] text-sm font-normal leading-normal">Current Medications</p>
-                    <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.current_medication }}</p>
+                    <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.actual_medecines }}</p>
                 </div>
                 </div>
                 <h3 class="text-[#111518] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Past Medical History</h3>
                 <div class="p-4 grid grid-cols-[20%_1fr] gap-x-6">
                 <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce1e5] py-5">
-                    <p class="text-[#637988] text-sm font-normal leading-normal">Conditions</p>
-                    <p class="text-[#111518] text-sm font-normal leading-normal">Hypertension, Type 2 Diabetes</p>
+                    <p class="text-[#637988] text-sm font-normal leading-normal">Diseases</p>
+                    <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.diseases }}</p>
                 </div>
                 <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce1e5] py-5">
                     <p class="text-[#637988] text-sm font-normal leading-normal">Surgeries</p>
-                    <p class="text-[#111518] text-sm font-normal leading-normal">Appendectomy (2005)</p>
+                    <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.surgeries }}</p>
                 </div>
                 <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce1e5] py-5">
                     <p class="text-[#637988] text-sm font-normal leading-normal">Immunizations</p>
-                    <p class="text-[#111518] text-sm font-normal leading-normal">Up-to-date</p>
+                    <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.vaccines }}</p>
                 </div>
                 </div>
             </div>

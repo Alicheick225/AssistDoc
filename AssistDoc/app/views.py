@@ -7,6 +7,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from .models import Patient
+from django.contrib.auth import authenticate, login
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -197,7 +202,44 @@ def generer_prescription(request):
 def index(request):
     return render(request, 'index.html')
 
+@csrf_protect
 def login_page(request):
+    # Rediriger si l'utilisateur est déjà connecté
+    #if request.user.is_authenticated:
+       #  return redirect("dashboard")
+    
+    if request.method == "POST":
+        # Récupérer les données du formulaire
+        username = request.POST.get("username")  # Plus clair
+        password = request.POST.get("password")
+        
+        # Validation des champs
+        if not username or not password:
+            messages.error(request, 'Veuillez remplir tous les champs.')
+            return render(request, 'login.html')
+        
+        print(f"Tentative de connexion pour: {username}")  # Debug
+        
+        # Authentification
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            print(f"Utilisateur trouvé: {user.username}, Type: {user.user_type}")  # Debug
+            
+            # Vérifier si l'utilisateur est un médecin
+            if user.user_type == 'doctor':
+                login(request, user)
+                messages.success(request, f'Bienvenue Dr. {user.get_full_name() or user.username}')
+                
+                # Redirection vers la page demandée ou dashboard par défaut
+                next_url = request.GET.get('next', 'dashboard')
+                return redirect(next_url)
+            else:
+                messages.error(request, 'Accès réservé aux médecins uniquement.')
+        else:
+            print(f"Échec d'authentification pour: {username}")  # Debug
+            messages.error(request, 'Identifiants invalides. Vérifiez votre nom d\'utilisateur et mot de passe.')
+    
     return render(request, 'login.html')
 
 def dashboard(request):
