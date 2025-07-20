@@ -102,6 +102,49 @@
                     <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.vaccines }}</p>
                 </div>
                 </div>
+                
+                <!-- Section Historique des Consultations -->
+                <h3 class="text-[#111518] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Historique des Consultations Validées</h3>
+                {% if consultations_validees %}
+                    <div class="p-4">
+                        {% for consultation in consultations_validees %}
+                        <div class="border border-[#dce1e5] rounded-lg p-4 mb-4 bg-gray-50">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#111518] font-medium">{{ consultation.consultation_date|date:"d/m/Y à H:i" }}</h4>
+                                <span class="text-xs text-[#637988] bg-green-100 px-2 py-1 rounded">✅ Validée</span>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p class="text-[#637988] font-medium">Motif:</p>
+                                    <p class="text-[#111518]">{{ consultation.consultation_reason|truncatewords:15 }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[#637988] font-medium">Diagnostic:</p>
+                                    <p class="text-[#111518]">{{ consultation.initial_diagnosis|truncatewords:15 }}</p>
+                                </div>
+                                {% if consultation.tension or consultation.temperature or consultation.heart_rate %}
+                                <div>
+                                    <p class="text-[#637988] font-medium">Signes vitaux:</p>
+                                    <p class="text-[#111518]">
+                                        {% if consultation.tension %}TA: {{ consultation.tension }}{% endif %}
+                                        {% if consultation.temperature %} | T°: {{ consultation.temperature }}°C{% endif %}
+                                        {% if consultation.heart_rate %} | FC: {{ consultation.heart_rate }} bpm{% endif %}
+                                    </p>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <p class="text-[#637988] font-medium">Médecin:</p>
+                                    <p class="text-[#111518]">Dr. {{ consultation.doctor.get_full_name|default:consultation.doctor.username }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="p-4">
+                        <p class="text-[#637988] text-sm italic">Aucune consultation validée trouvée pour ce patient.</p>
+                    </div>
+                {% endif %}
             </div>
             <div class="flex gap-2">
                 <a href="{% url 'symptome' patient.social_security_number %}" class="flex min-w-[84px] h-10 px-4 items-center justify-center bg-[#1993e5] text-slate-50 text-sm font-bold rounded-lg">

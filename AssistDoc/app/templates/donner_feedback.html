@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback IA - AssistDoc</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                        <i class="fas fa-robot text-blue-600 mr-3"></i>
+                        Feedback sur l'IA
+                    </h1>
+                    <p class="text-gray-600">Aidez-nous à améliorer les performances de l'intelligence artificielle</p>
+                </div>
+                <a href="{% url 'dashboard' %}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-200">
+                    <i class="fas fa-arrow-left mr-2"></i>Retour au dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Information patient -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">
+                <i class="fas fa-user-injured text-green-600 mr-2"></i>
+                Patient: {{ patient.first_name }} {{ patient.last_name }}
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <p><strong>Date de consultation:</strong> {{ consultation.consultation_date|date:"d/m/Y à H:i" }}</p>
+                <p><strong>Motif:</strong> {{ consultation.consultation_reason }}</p>
+                <p><strong>Diagnostic IA:</strong> {{ consultation.initial_diagnosis }}</p>
+            </div>
+        </div>
+
+        <!-- Formulaire de feedback -->
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Section 1: Type de feedback -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-clipboard-check text-blue-600 mr-2"></i>
+                    1. Type de feedback
+                </h3>
+                
+                <div class="space-y-3">
+                    {% for value, label in feedback_choices %}
+                    <label class="flex items-center">
+                        <input type="radio" name="feedback_type" value="{{ value }}" 
+                               {% if feedback.feedback_type == value %}checked{% endif %}
+                               class="text-blue-600 mr-3">
+                        <span class="text-gray-700">{{ label }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Section 2: Modifications (si applicable) -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-edit text-orange-600 mr-2"></i>
+                    2. Modifications apportées (si applicable)
+                </h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Décrivez les modifications effectuées:
+                        </label>
+                        <textarea name="modifications_effectuees" rows="3" 
+                                  class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  placeholder="Ex: Changé le dosage de paracétamol de 1g à 500mg...">{{ feedback.modifications_effectuees }}</textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Raison des modifications:
+                        </label>
+                        <textarea name="raison_modification" rows="2" 
+                                  class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  placeholder="Ex: Dosage trop élevé pour l'âge du patient...">{{ feedback.raison_modification }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Évaluation de l'IA -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-star text-yellow-600 mr-2"></i>
+                    3. Évaluation de la pertinence de l'IA
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Pertinence du diagnostic (1-10):
+                        </label>
+                        <input type="range" name="pertinence_diagnostic" min="1" max="10" 
+                               value="{{ feedback.pertinence_diagnostic }}" 
+                               class="w-full" id="diagnostic-range">
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>1 (Très faible)</span>
+                            <span id="diagnostic-value">{{ feedback.pertinence_diagnostic }}</span>
+                            <span>10 (Excellent)</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Pertinence de la prescription (1-10):
+                        </label>
+                        <input type="range" name="pertinence_prescription" min="1" max="10" 
+                               value="{{ feedback.pertinence_prescription }}" 
+                               class="w-full" id="prescription-range">
+                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>1 (Très faible)</span>
+                            <span id="prescription-value">{{ feedback.pertinence_prescription }}</span>
+                            <span>10 (Excellent)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Commentaires sur l'IA:
+                    </label>
+                    <textarea name="commentaires_medecin" rows="3" 
+                              class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Vos observations sur la qualité de l'analyse IA...">{{ feedback.commentaires_medecin }}</textarea>
+                </div>
+            </div>
+
+            <!-- Section 4: Suivi du traitement -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-heartbeat text-red-600 mr-2"></i>
+                    4. Suivi du traitement
+                </h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Efficacité du traitement:
+                        </label>
+                        <select name="efficacite_traitement" 
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            {% for value, label in efficacite_choices %}
+                            <option value="{{ value }}" {% if feedback.efficacite_traitement == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Durée de guérison (en jours):
+                            </label>
+                            <input type="number" name="duree_guerison" min="0" 
+                                   value="{{ feedback.duree_guerison|default:'' }}"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   placeholder="Ex: 7">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Satisfaction patient (1-10):
+                            </label>
+                            <input type="range" name="satisfaction_patient" min="1" max="10" 
+                                   value="{{ feedback.satisfaction_patient|default:5 }}" 
+                                   class="w-full" id="satisfaction-range">
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>1 (Très insatisfait)</span>
+                                <span id="satisfaction-value">{{ feedback.satisfaction_patient|default:5 }}</span>
+                                <span>10 (Très satisfait)</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Effets secondaires observés:
+                        </label>
+                        <textarea name="effets_secondaires_observes" rows="2" 
+                                  class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  placeholder="Décrivez les éventuels effets secondaires...">{{ feedback.effets_secondaires_observes }}</textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Commentaires du patient:
+                        </label>
+                        <textarea name="commentaires_patient" rows="2" 
+                                  class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  placeholder="Retour du patient sur le traitement...">{{ feedback.commentaires_patient }}</textarea>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" name="suivi_complete" id="suivi_complete" 
+                               {% if feedback.suivi_complete %}checked{% endif %}
+                               class="text-blue-600 mr-3">
+                        <label for="suivi_complete" class="text-sm text-gray-700">
+                            Le suivi post-traitement est terminé
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="flex justify-end space-x-4">
+                <a href="{% url 'dashboard' %}" 
+                   class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition duration-200">
+                    Annuler
+                </a>
+                <button type="submit" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition duration-200">
+                    <i class="fas fa-save mr-2"></i>Enregistrer le feedback
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Script pour les sliders
+        document.getElementById('diagnostic-range').addEventListener('input', function() {
+            document.getElementById('diagnostic-value').textContent = this.value;
+        });
+        
+        document.getElementById('prescription-range').addEventListener('input', function() {
+            document.getElementById('prescription-value').textContent = this.value;
+        });
+        
+        document.getElementById('satisfaction-range').addEventListener('input', function() {
+            document.getElementById('satisfaction-value').textContent = this.value;
+        });
+    </script>
+</body>
+</html>

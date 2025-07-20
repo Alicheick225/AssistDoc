@@ -1,0 +1,385 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats de Consultation - AssistDoc</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link rel="stylesheet" as="style" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" />
+</head>
+<body>
+    <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style='font-family: Inter, "Noto Sans", sans-serif;'>
+        <!-- Header -->
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f3f4] px-10 py-3">
+            <div class="flex items-center gap-4 text-[#111518]">
+                <div class="size-4">
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
+                    </svg>
+                </div>
+                <h2 class="text-[#111518] text-lg font-bold leading-tight tracking-[-0.015em]">AssistDoc</h2>
+            </div>
+            <div class="flex flex-1 justify-end gap-8">
+                <div class="flex items-center gap-9">
+                    <a class="text-[#111518] text-sm font-medium leading-normal" href="{% url 'dashboard' %}">Dashboard</a>
+                    <a class="text-[#111518] text-sm font-medium leading-normal" href="#">Patients</a>
+                    <a class="text-[#111518] text-sm font-medium leading-normal" href="#">Consultations</a>
+                </div>
+            </div>
+        </header>
+
+        <div class="gap-1 px-6 flex flex-1 justify-center py-5">
+            <div class="layout-content-container flex flex-col max-w-[920px] flex-1">
+                <!-- Titre -->
+                <div class="flex flex-wrap justify-between gap-3 p-4">
+                    <div class="flex min-w-72 flex-col gap-3">
+                        <p class="text-[#111518] tracking-light text-[32px] font-bold leading-tight">Résultats de Consultation</p>
+                        <p class="text-[#637988] text-sm font-normal leading-normal">
+                            Diagnostic et recommandations générés par l'IA pour {{ patient.first_name }} {{ patient.last_name }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Niveau d'urgence -->
+                {% if recommendations.urgence_niveau %}
+                <div class="mx-4 mb-4 p-4 rounded-lg 
+                    {% if recommendations.urgence_niveau == 'Urgent' %}bg-red-100 border-red-200{% elif recommendations.urgence_niveau == 'Élevé' %}bg-orange-100 border-orange-200{% elif recommendations.urgence_niveau == 'Modéré' %}bg-yellow-100 border-yellow-200{% else %}bg-green-100 border-green-200{% endif %} border">
+                    <h3 class="font-bold text-lg mb-2">Niveau d'Urgence: {{ recommendations.urgence_niveau }}</h3>
+                </div>
+                {% endif %}
+
+                <!-- Diagnostic Principal -->
+                <h2 class="text-[#111518] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Diagnostic Principal</h2>
+                <div class="mx-4 mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <h3 class="font-bold text-lg mb-2">{{ recommendations.diagnostic_principal }}</h3>
+                    <p class="text-[#111518] text-base font-normal leading-normal">
+                        {{ recommendations.justification_diagnostic }}
+                    </p>
+                </div>
+
+                <!-- Diagnostic Différentiel -->
+                {% if recommendations.diagnostic_differentiel %}
+                <h3 class="text-[#111518] text-[18px] font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-3">Diagnostic Différentiel</h3>
+                <div class="mx-4 mb-4">
+                    <ul class="list-disc list-inside space-y-1">
+                        {% for diagnostic in recommendations.diagnostic_differentiel %}
+                        <li class="text-[#637988] text-sm">{{ diagnostic }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Prescriptions -->
+                <h2 class="text-[#111518] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Prescriptions Recommandées</h2>
+                
+                {% if recommendations.prescriptions_recommandees %}
+                    {% if recommendations.prescriptions_recommandees|length > 0 and recommendations.prescriptions_recommandees.0.nom_medicament %}
+                        <!-- Format structuré (tableau d'objets) -->
+                        {% for prescription in recommendations.prescriptions_recommandees %}
+                        <div class="mx-4 mb-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                            <h3 class="font-bold text-lg mb-2">{{ prescription.nom_medicament }}</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">Dosage:</p>
+                                    <p class="text-sm">{{ prescription.dosage|default:"Non spécifié" }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">Fréquence:</p>
+                                    <p class="text-sm">{{ prescription.frequence|default:"Non spécifié" }}</p>
+                                </div>
+                                {% if prescription.duree_traitement %}
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">Durée:</p>
+                                    <p class="text-sm">{{ prescription.duree_traitement }}</p>
+                                </div>
+                                {% endif %}
+                                {% if prescription.voie_administration %}
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700">Voie d'administration:</p>
+                                    <p class="text-sm">{{ prescription.voie_administration }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% if prescription.justification %}
+                            <div class="mt-3 p-3 bg-blue-50 rounded">
+                                <p class="text-sm font-medium text-blue-800">Justification:</p>
+                                <p class="text-sm text-blue-700">{{ prescription.justification }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <!-- Format texte (après modification manuelle) -->
+                        <div class="mx-4 mb-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                            <pre class="whitespace-pre-wrap text-sm">{{ recommendations.prescriptions_recommandees }}</pre>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="mx-4 mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <p class="text-gray-500 italic">Aucune prescription recommandée.</p>
+                    </div>
+                {% endif %}
+
+                <!-- Ordonnance Médicale -->
+                {% if recommendations.ordonnance_medicale %}
+                <h2 class="text-[#111518] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">📋 Ordonnance Médicale</h2>
+                <div class="mx-4 mb-4 p-6 bg-white rounded-lg border-2 border-blue-200 shadow-lg">
+                    <!-- En-tête d'ordonnance -->
+                    <div class="text-center mb-6 pb-4 border-b-2 border-gray-200">
+                        <h3 class="text-xl font-bold text-blue-800">ORDONNANCE MÉDICALE</h3>
+                        <p class="text-sm text-gray-600 mt-2">Dr. {{ consultation.doctor.get_full_name|default:consultation.doctor.username }}</p>
+                        <p class="text-sm text-gray-600">Date: {{ consultation.consultation_date|date:"d/m/Y" }}</p>
+                    </div>
+                    
+                    <!-- Patient info -->
+                    <div class="mb-6 p-3 bg-gray-50 rounded">
+                        <p class="font-semibold">Patient: {{ patient.first_name }} {{ patient.last_name }}</p>
+                        <p class="text-sm text-gray-600">N° Sécurité Sociale: {{ patient.social_security_number }}</p>
+                        {% if patient.birth_date %}<p class="text-sm text-gray-600">Âge: {{ patient.birth_date|age }} ans</p>{% endif %}
+                    </div>
+
+                    <!-- Médicaments -->
+                    <div class="mb-6">
+                        <h4 class="font-bold text-lg mb-4 text-blue-700">💊 Médicaments prescrits:</h4>
+                        {% for medicament in recommendations.ordonnance_medicale.medicaments %}
+                        <div class="mb-4 p-4 border border-gray-200 rounded-lg bg-blue-50">
+                            <div class="flex justify-between items-start mb-2">
+                                <h5 class="font-bold text-lg">{{ medicament.nom_commercial }}</h5>
+                                {% if medicament.forme %}<span class="text-sm bg-blue-200 px-2 py-1 rounded">{{ medicament.forme }}</span>{% endif %}
+                            </div>
+                            {% if medicament.nom_generique %}
+                            <p class="text-sm text-gray-600 mb-2">{{ medicament.nom_generique }}</p>
+                            {% endif %}
+                            
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="font-medium">Posologie:</span> {{ medicament.posologie }}
+                                    {% if medicament.dosage_unitaire %} ({{ medicament.dosage_unitaire }}){% endif %}
+                                </div>
+                                <div>
+                                    <span class="font-medium">Fréquence:</span> {{ medicament.frequence }}
+                                </div>
+                                <div>
+                                    <span class="font-medium">Durée:</span> {{ medicament.duree }}
+                                </div>
+                                {% if medicament.moment_prise %}
+                                <div>
+                                    <span class="font-medium">Moment:</span> {{ medicament.moment_prise }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            {% if medicament.instructions_speciales %}
+                            <div class="mt-2 p-2 bg-yellow-100 rounded text-sm">
+                                <span class="font-medium">⚠️ Instructions spéciales:</span> {{ medicament.instructions_speciales }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Instructions générales -->
+                    {% if recommendations.ordonnance_medicale.instructions_generales %}
+                    <div class="mb-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                        <h4 class="font-bold text-green-800 mb-2">📝 Instructions générales:</h4>
+                        <p class="text-sm">{{ recommendations.ordonnance_medicale.instructions_generales }}</p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Contre-indications -->
+                    {% if recommendations.ordonnance_medicale.contre_indications %}
+                    <div class="mb-4 p-4 bg-red-50 rounded-lg border border-red-200">
+                        <h4 class="font-bold text-red-800 mb-2">⚠️ Contre-indications:</h4>
+                        <p class="text-sm">{{ recommendations.ordonnance_medicale.contre_indications }}</p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Pied d'ordonnance -->
+                    <div class="mt-6 pt-4 border-t-2 border-gray-200 text-sm text-gray-600">
+                        <div class="flex justify-between">
+                            <div>
+                                {% if recommendations.ordonnance_medicale.renouvellement %}
+                                <p><strong>Renouvellement:</strong> {{ recommendations.ordonnance_medicale.renouvellement }}</p>
+                                {% endif %}
+                                {% if recommendations.ordonnance_medicale.duree_validite %}
+                                <p><strong>Validité:</strong> {{ recommendations.ordonnance_medicale.duree_validite }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="text-right">
+                                <p>Signature du médecin</p>
+                                <div class="w-32 h-16 border border-gray-300 mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Examens Complémentaires -->
+                {% if recommendations.examens_complementaires %}
+                <h2 class="text-[#111518] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Examens Complémentaires</h2>
+                <div class="mx-4 mb-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
+                    <ul class="list-disc list-inside space-y-2">
+                        {% for examen in recommendations.examens_complementaires %}
+                        <li class="text-[#111518] text-base">{{ examen }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Recommandations de Suivi -->
+                {% if recommendations.recommandations_suivi %}
+                <h2 class="text-[#111518] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Recommandations de Suivi</h2>
+                <div class="mx-4 mb-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <p class="text-[#111518] text-base">{{ recommendations.recommandations_suivi }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Conseils Patient -->
+                {% if recommendations.conseils_patient %}
+                <h2 class="text-[#111518] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Conseils pour le Patient</h2>
+                <div class="mx-4 mb-4 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                    <p class="text-[#111518] text-base">{{ recommendations.conseils_patient }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Boutons d'action -->
+                <div class="flex justify-stretch">
+                    <div class="flex flex-1 gap-3 flex-wrap px-4 py-3 justify-end">
+                        <!-- Bouton Imprimer -->
+                        <button onclick="window.print()" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#f0f3f4] text-[#111518] text-sm font-bold leading-normal tracking-[0.015em]">
+                            <span class="truncate">📄 Imprimer</span>
+                        </button>
+                        
+                        <!-- Bouton Modifier -->
+                        <button onclick="modifierConsultation()" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#f59e0b] text-white text-sm font-bold leading-normal tracking-[0.015em]">
+                            <span class="truncate">✏️ Modifier</span>
+                        </button>
+                        
+                        <!-- Nouveau: Bouton Feedback IA -->
+                        <a href="{% url 'donner_feedback' consultation_id=consultation.id %}" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#8b5cf6] text-white text-sm font-bold leading-normal tracking-[0.015em]">
+                            <span class="truncate">🤖 Feedback IA</span>
+                        </a>
+                        
+                        <!-- Nouveau: Bouton Annuler Prescription -->
+                        <button onclick="annulerPrescription()" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#ef4444] text-white text-sm font-bold leading-normal tracking-[0.015em]">
+                            <span class="truncate">❌ Annuler</span>
+                        </button>
+                        
+                        <!-- Bouton Retour Enregistrement -->
+                        <a href="{% url 'symptome' patient_social_security_number=patient.social_security_number %}" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#6b7280] text-white text-sm font-bold leading-normal tracking-[0.015em]">
+                            <span class="truncate">↩️ Nouvelle Consultation</span>
+                        </a>
+                        
+                        <!-- Bouton Valider -->
+                        <button onclick="validerConsultation()" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#10b981] text-white text-sm font-bold leading-normal tracking-[0.015em]">
+                            <span class="truncate">✅ Valider Prescription</span>
+                        </button>
+                        
+                        <!-- Bouton Retour Dashboard -->
+                        <a href="{% url 'dashboard' %}" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#1993e5] text-white text-sm font-bold leading-normal tracking-[0.015em]">
+                            <span class="truncate">🏠 Dashboard</span>
+                        </a>
+                    </div>
+                </div>
+
+                <script>
+                function modifierConsultation() {
+                    if (confirm('Voulez-vous modifier cette prescription ? Vous pourrez éditer le texte généré par l\'IA.')) {
+                        // Rediriger vers la page de modification de prescription
+                        window.location.href = "{% url 'modifier_prescription' consultation_id=consultation.id %}";
+                    }
+                }
+
+                function validerConsultation() {
+                    if (confirm('Êtes-vous sûr de vouloir valider cette prescription ? Elle sera ajoutée définitivement à l\'historique du patient et un feedback sera créé pour améliorer l\'IA.')) {
+                        // Créer un formulaire pour valider la consultation
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '{% url "valider_consultation" consultation_id=consultation.id %}';
+                        
+                        const csrfToken = document.createElement('input');
+                        csrfToken.type = 'hidden';
+                        csrfToken.name = 'csrfmiddlewaretoken';
+                        csrfToken.value = '{{ csrf_token }}';
+                        
+                        form.appendChild(csrfToken);
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                }
+
+                function annulerPrescription() {
+                    if (confirm('Êtes-vous sûr de vouloir annuler cette prescription ? Cette action aidera à améliorer l\'IA en identifiant les prescriptions inappropriées.')) {
+                        // Créer un formulaire pour annuler la prescription
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '{% url "annuler_prescription" consultation_id=consultation.id %}';
+                        
+                        const csrfToken = document.createElement('input');
+                        csrfToken.type = 'hidden';
+                        csrfToken.name = 'csrfmiddlewaretoken';
+                        csrfToken.value = '{{ csrf_token }}';
+                        
+                        form.appendChild(csrfToken);
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                }
+                }
+                </script>
+            </div>
+
+            <!-- Panel d'informations patient -->
+            <div class="layout-content-container flex flex-col w-[360px]">
+                <h2 class="text-[#111518] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Information Patient</h2>
+                <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+                    <div class="flex flex-col justify-center">
+                        <p class="text-[#111518] text-base font-medium leading-normal line-clamp-1">{{ patient.first_name }} {{ patient.last_name }}</p>
+                        <p class="text-[#637988] text-sm font-normal leading-normal line-clamp-2">ID: {{ patient.social_security_number }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+                    <div class="flex flex-col justify-center">
+                        <p class="text-[#111518] text-base font-medium leading-normal line-clamp-1">Date de Naissance</p>
+                        <p class="text-[#637988] text-sm font-normal leading-normal line-clamp-2">{{ patient.birth_date|default:"Non spécifiée" }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+                    <div class="flex flex-col justify-center">
+                        <p class="text-[#111518] text-base font-medium leading-normal line-clamp-1">Sexe</p>
+                        <p class="text-[#637988] text-sm font-normal leading-normal line-clamp-2">{{ patient.get_gender_display }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+                    <div class="flex flex-col justify-center">
+                        <p class="text-[#111518] text-base font-medium leading-normal line-clamp-1">Allergies</p>
+                        <p class="text-[#637988] text-sm font-normal leading-normal line-clamp-2">{{ patient.allergies|default:"Aucune allergie connue" }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+                    <div class="flex flex-col justify-center">
+                        <p class="text-[#111518] text-base font-medium leading-normal line-clamp-1">Antécédents</p>
+                        <p class="text-[#637988] text-sm font-normal leading-normal line-clamp-2">{{ patient.diseases|default:"Aucun antécédent connu" }}</p>
+                    </div>
+                </div>
+
+                <h2 class="text-[#111518] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Détails Consultation</h2>
+                <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+                    <div class="flex flex-col justify-center">
+                        <p class="text-[#111518] text-base font-medium leading-normal line-clamp-1">Date et Heure</p>
+                        <p class="text-[#637988] text-sm font-normal leading-normal line-clamp-2">{{ consultation.consultation_date|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+                    <div class="flex flex-col justify-center">
+                        <p class="text-[#111518] text-base font-medium leading-normal line-clamp-1">Médecin</p>
+                        <p class="text-[#637988] text-sm font-normal leading-normal line-clamp-2">Dr. {{ consultation.doctor.get_full_name|default:consultation.doctor.username }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
