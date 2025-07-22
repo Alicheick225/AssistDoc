@@ -58,7 +58,6 @@ class Patient(models.Model):
     social_security_number = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     first_name = models.CharField(max_length=100)
-    birth_date = models.DateField()
     gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female'), ('O', 'Other')])
     birth_date = models.DateField(null=True, blank=True)
     address = models.TextField(null=True, blank=True)
@@ -94,7 +93,6 @@ class Consultation(models.Model):
     hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='consultations_hospital')
     doctor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='performed_consultations')
     consultation_date = models.DateTimeField(auto_now_add=True)
-    consultation_reason = models.TextField()
     clinical_exam = models.TextField(blank=True, null=True)
     initial_diagnosis = models.TextField(blank=True, null=True)
     tension = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)  # Tension artérielle
