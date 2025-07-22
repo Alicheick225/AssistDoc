@@ -1,0 +1,158 @@
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Stitch Design</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900"
+        />
+
+        <!-- Favicon -->
+        <link rel="icon" href="/static/images/favicon.ico" />
+
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    </head>
+
+    <body>
+        <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style='font-family: Inter, "Noto Sans", sans-serif;'>
+        <div class="layout-container flex h-full grow flex-col">
+            <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7eef3] px-10 py-3">
+                <div class="flex items-center gap-4 text-[#0e161b]">
+                <div class="size-4">
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z"
+                        fill="currentColor"
+                    ></path>
+                    </svg>
+                </div>
+                <h2 class="text-[#0e161b] text-lg font-bold leading-tight tracking-[-0.015em]">AssistDoc</h2>
+                </div>
+                <div class="flex flex-1 justify-end gap-8">
+                <div class="flex items-center gap-9">
+                    <a class="text-[#0e161b] text-sm font-medium leading-normal" href="#">Dashboard</a>
+                    <a class="text-[#0e161b] text-sm font-medium leading-normal" href="#">Patients</a>
+                    <a class="text-[#0e161b] text-sm font-medium leading-normal" href="#">Consultations</a>
+                    <a class="text-[#0e161b] text-sm font-medium leading-normal" href="#">Settings</a>
+                </div>
+                <div
+                    class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD4IeuR_ANLJhx03zJTLacex8X8G1IjOun-Ru4UIrM25GoNeReHc9B3j7jzI5koNzZ1obmozgEhwuhOKl9gHf8hsFc242JiygCY0KKQv8K9xsiKD0sSxgGIpjqsJIV9m6ofekd-AfHZJP6PypjfLDsOZ-52tUpmufZ6vLTVnW-CsbsWzs556nwEXSjhcty1BIULRzPfnta6khN1NCosPgw1z3e-noY3cNqN7SPksyxx7hfHPTKFwdY7vF5Z_52sYiDxe7nEPj8ffaQ");'
+                ></div>
+                </div>
+            </header>
+            <div class="px-40 flex flex-1 justify-center py-5">
+            <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+                <div class="flex flex-wrap justify-between gap-3 p-4">
+                <div class="flex min-w-72 flex-col gap-3">
+                    <p class="text-[#111518] tracking-light text-[32px] font-bold leading-tight">Patient Medical History</p>
+                    <p class="text-[#637988] text-sm font-normal leading-normal">Review the complete medical background of the patient.</p>
+                </div>
+                </div>
+                <h3 class="text-[#111518] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Personal Information</h3>
+                <div class="p-4 grid grid-cols-[20%_1fr] gap-x-6">
+                <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce1e5] py-5">
+                    <p class="text-[#637988] text-sm font-normal leading-normal">Name</p>
+                    <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.last_name }} {{ patient.first_name }}</p>
+                </div>
+                <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce1e5] py-5">
+                    <p class="text-[#637988] text-sm font-normal leading-normal">Date of Birth</p>
+                    <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.birth_date }}</p>
+                </div>
+                <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce1e5] py-5">
+                    <p class="text-[#637988] text-sm font-normal leading-normal">Gender</p>
+                    <p class="text-[#111518] text-sm font-normal leading-normal">Female</p>
+                </div>
+                <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce1e5] py-5">
+                    <p class="text-[#637988] text-sm font-normal leading-normal">Address</p>
+                    <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.address }}</p>
+                </div>
+                </div>
+                <h3 class="text-[#111518] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Allergies</h3>
+                <div class="p-4 grid grid-cols-[20%_1fr] gap-x-6">
+                <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce1e5] py-5">
+                    <p class="text-[#637988] text-sm font-normal leading-normal">Allergies</p>
+                    <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.allergies }}</p>
+                </div>
+                </div>
+                <h3 class="text-[#111518] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Medications</h3>
+                <div class="p-4 grid grid-cols-[20%_1fr] gap-x-6">
+                <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce1e5] py-5">
+                    <p class="text-[#637988] text-sm font-normal leading-normal">Current Medications</p>
+                    <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.actual_medecines }}</p>
+                </div>
+                </div>
+                <h3 class="text-[#111518] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Past Medical History</h3>
+                <div class="p-4 grid grid-cols-[20%_1fr] gap-x-6">
+                <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce1e5] py-5">
+                    <p class="text-[#637988] text-sm font-normal leading-normal">Diseases</p>
+                    <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.diseases }}</p>
+                </div>
+                <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce1e5] py-5">
+                    <p class="text-[#637988] text-sm font-normal leading-normal">Surgeries</p>
+                    <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.surgeries }}</p>
+                </div>
+                <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce1e5] py-5">
+                    <p class="text-[#637988] text-sm font-normal leading-normal">Immunizations</p>
+                    <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.vaccines }}</p>
+                </div>
+                </div>
+                
+                <!-- Section Historique des Consultations -->
+                <h3 class="text-[#111518] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Historique des Consultations Validées</h3>
+                {% if consultations_validees %}
+                    <div class="p-4">
+                        {% for consultation in consultations_validees %}
+                        <div class="border border-[#dce1e5] rounded-lg p-4 mb-4 bg-gray-50">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-[#111518] font-medium">{{ consultation.consultation_date|date:"d/m/Y à H:i" }}</h4>
+                                <span class="text-xs text-[#637988] bg-green-100 px-2 py-1 rounded">✅ Validée</span>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p class="text-[#637988] font-medium">Motif:</p>
+                                    <p class="text-[#111518]">{{ consultation.consultation_reason|truncatewords:15 }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[#637988] font-medium">Diagnostic:</p>
+                                    <p class="text-[#111518]">{{ consultation.initial_diagnosis|truncatewords:15 }}</p>
+                                </div>
+                                {% if consultation.tension or consultation.temperature or consultation.heart_rate %}
+                                <div>
+                                    <p class="text-[#637988] font-medium">Signes vitaux:</p>
+                                    <p class="text-[#111518]">
+                                        {% if consultation.tension %}TA: {{ consultation.tension }}{% endif %}
+                                        {% if consultation.temperature %} | T°: {{ consultation.temperature }}°C{% endif %}
+                                        {% if consultation.heart_rate %} | FC: {{ consultation.heart_rate }} bpm{% endif %}
+                                    </p>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <p class="text-[#637988] font-medium">Médecin:</p>
+                                    <p class="text-[#111518]">Dr. {{ consultation.doctor.get_full_name|default:consultation.doctor.username }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="p-4">
+                        <p class="text-[#637988] text-sm italic">Aucune consultation validée trouvée pour ce patient.</p>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="flex gap-2">
+                <a href="{% url 'symptome' patient.social_security_number %}" class="flex min-w-[84px] h-10 px-4 items-center justify-center bg-[#1993e5] text-slate-50 text-sm font-bold rounded-lg">
+                    <span class="truncate">Nouvelle Consultation</span>
+                </a>
+            </div>
+            </div>
+        </div>
+        </div>
+    </body>
+</html>

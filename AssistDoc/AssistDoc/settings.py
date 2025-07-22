@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-k2)z=riqqq3wg9qx0w9n=nl$2h+0+4#k_bs^qeubatpmcvosmq"
+SECRET_KEY = os.getenv('SECRET_KEY', "django-insecure-k2)z=riqqq3wg9qx0w9n=nl$2h+0+4#k_bs^qeubatpmcvosmq")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -83,11 +83,11 @@ WSGI_APPLICATION = "AssistDoc.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",  # Le nom de la base de données est 'postgres' comme indiqué
-        "USER": "postgres.hmgkxpaswqbzddptyugh", # Votre nom d'utilisateur Supabase
-        "PASSWORD": "JTe$C5a@DaXu5ZUE", 
-        "HOST": "aws-0-eu-central-1.pooler.supabase.com", # Votre hôte Supabase
-        "PORT": "6543",            # Le port Supabase
+        "NAME": os.getenv('DB_NAME', 'postgres'),
+        "USER": os.getenv('DB_USER', 'postgres.hmgkxpaswqbzddptyugh'),
+        "PASSWORD": os.getenv('DB_PASSWORD', 'JTe$C5a@DaXu5ZUE'),
+        "HOST": os.getenv('DB_HOST', 'aws-0-eu-central-1.pooler.supabase.com'),
+        "PORT": os.getenv('DB_PORT', '6543'),
     }
 }
 
@@ -142,4 +142,7 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Configuration de l'API Gemini
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+
+# Configuration du modèle utilisateur personnalisé
+AUTH_USER_MODEL = 'app.User'

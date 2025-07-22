@@ -1,0 +1,204 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier Prescription - AssistDoc</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link rel="stylesheet" as="style" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" />
+</head>
+<body>
+    <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style='font-family: Inter, "Noto Sans", sans-serif;'>
+        <!-- Header -->
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f3f4] px-10 py-3">
+            <div class="flex items-center gap-4 text-[#111518]">
+                <div class="size-4">
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
+                    </svg>
+                </div>
+                <h2 class="text-[#111518] text-lg font-bold leading-tight tracking-[-0.015em]">AssistDoc</h2>
+            </div>
+            <div class="flex flex-1 justify-end gap-8">
+                <div class="flex items-center gap-9">
+                    <a class="text-[#111518] text-sm font-medium leading-normal" href="{% url 'dashboard' %}">Dashboard</a>
+                    <a class="text-[#111518] text-sm font-medium leading-normal" href="#">Patients</a>
+                    <a class="text-[#111518] text-sm font-medium leading-normal" href="#">Consultations</a>
+                </div>
+            </div>
+        </header>
+
+        <div class="gap-1 px-6 flex flex-1 justify-center py-5">
+            <div class="layout-content-container flex flex-col max-w-[920px] flex-1">
+                <!-- Titre -->
+                <div class="flex flex-wrap justify-between gap-3 p-4">
+                    <div class="flex min-w-72 flex-col gap-3">
+                        <p class="text-[#111518] tracking-light text-[32px] font-bold leading-tight">Modifier la Prescription</p>
+                        <p class="text-[#637988] text-sm font-normal leading-normal">
+                            Modifiez le diagnostic et la prescription générés par l'IA pour {{ patient.first_name }} {{ patient.last_name }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Formulaire de modification -->
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- Diagnostic Principal -->
+                    <div class="px-4 py-3">
+                        <label class="flex flex-col">
+                            <p class="text-[#111518] text-base font-medium leading-normal pb-2">Diagnostic Principal *</p>
+                            <textarea name="diagnostic_principal" required
+                                placeholder="Diagnostic principal..."
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111518] focus:outline-0 focus:ring-0 border border-[#d0dee7] bg-slate-50 focus:border-[#d0dee7] min-h-20 placeholder:text-[#637988] p-[15px] text-base font-normal leading-normal">{{ consultation.initial_diagnosis|default:"" }}</textarea>
+                        </label>
+                    </div>
+
+                    <!-- Justification du Diagnostic -->
+                    <div class="px-4 py-3">
+                        <label class="flex flex-col">
+                            <p class="text-[#111518] text-base font-medium leading-normal pb-2">Justification du Diagnostic *</p>
+                            <textarea name="justification_diagnostic" required
+                                placeholder="Justification médicale du diagnostic..."
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111518] focus:outline-0 focus:ring-0 border border-[#d0dee7] bg-slate-50 focus:border-[#d0dee7] min-h-32 placeholder:text-[#637988] p-[15px] text-base font-normal leading-normal">{{ recommendations.justification_diagnostic|default:"" }}</textarea>
+                        </label>
+                    </div>
+
+                    <!-- Ordonnance Médicale -->
+                    <div class="px-4 py-3">
+                        <h3 class="text-[#111518] text-lg font-medium mb-4">📋 Prescription Médicamenteuse</h3>
+                        
+                        <!-- Prescriptions détaillées -->
+                        <div class="mb-4">
+                            <label class="flex flex-col">
+                                <p class="text-[#111518] text-base font-medium leading-normal pb-2">Médicaments Prescrits *</p>
+                                <textarea name="prescriptions_recommandees" required
+                                    placeholder="Exemple:
+1. PARACETAMOL 1000mg comprimés
+   - Dosage: 1000mg
+   - Fréquence: 3 fois par jour
+   - Durée: 5 jours
+   - Justification: Pour soulager la douleur et réduire la fièvre
+
+2. AMOXICILLINE 500mg gélules  
+   - Dosage: 500mg
+   - Fréquence: 2 fois par jour
+   - Durée: 7 jours
+   - Justification: Antibiothérapie pour infection bactérienne"
+                                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111518] focus:outline-0 focus:ring-0 border border-[#d0dee7] bg-slate-50 focus:border-[#d0dee7] min-h-40 placeholder:text-[#637988] p-[15px] text-base font-normal leading-normal">{% if recommendations.prescriptions_recommandees %}{% if recommendations.prescriptions_recommandees|length > 0 and recommendations.prescriptions_recommandees.0.nom_medicament %}{% for prescription in recommendations.prescriptions_recommandees %}{{ forloop.counter }}. {{ prescription.nom_medicament|default:"Médicament" }} {% if prescription.dosage %}{{ prescription.dosage }}{% endif %}
+   - Dosage: {{ prescription.dosage|default:"À définir" }}
+   - Fréquence: {{ prescription.frequence|default:"À définir" }}
+   - Durée: {{ prescription.duree_traitement|default:"À définir" }}
+   - Justification: {{ prescription.justification|default:"À définir" }}
+
+{% endfor %}{% else %}{{ recommendations.prescriptions_recommandees }}{% endif %}{% endif %}</textarea>
+                            </label>
+                        </div>
+
+                        <!-- Instructions générales -->
+                        <div class="mb-4">
+                            <label class="flex flex-col">
+                                <p class="text-[#111518] text-base font-medium leading-normal pb-2">Instructions Générales</p>
+                                <textarea name="instructions_generales"
+                                    placeholder="Instructions générales pour le patient (précautions, effets secondaires à surveiller, etc.)"
+                                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111518] focus:outline-0 focus:ring-0 border border-[#d0dee7] bg-slate-50 focus:border-[#d0dee7] min-h-24 placeholder:text-[#637988] p-[15px] text-base font-normal leading-normal">{{ recommendations.ordonnance_medicale.instructions_generales|default:"" }}</textarea>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Recommandations de suivi -->
+                    <div class="px-4 py-3">
+                        <label class="flex flex-col">
+                            <p class="text-[#111518] text-base font-medium leading-normal pb-2">Recommandations de Suivi</p>
+                            <textarea name="recommandations_suivi"
+                                placeholder="Recommandations pour le suivi du patient..."
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111518] focus:outline-0 focus:ring-0 border border-[#d0dee7] bg-slate-50 focus:border-[#d0dee7] min-h-24 placeholder:text-[#637988] p-[15px] text-base font-normal leading-normal">{{ recommendations.recommandations_suivi|default:"" }}</textarea>
+                        </label>
+                    </div>
+
+                    <!-- Conseils patient -->
+                    <div class="px-4 py-3">
+                        <label class="flex flex-col">
+                            <p class="text-[#111518] text-base font-medium leading-normal pb-2">Conseils pour le Patient</p>
+                            <textarea name="conseils_patient"
+                                placeholder="Conseils et instructions pour le patient..."
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111518] focus:outline-0 focus:ring-0 border border-[#d0dee7] bg-slate-50 focus:border-[#d0dee7] min-h-24 placeholder:text-[#637988] p-[15px] text-base font-normal leading-normal">{{ recommendations.conseils_patient|default:"" }}</textarea>
+                        </label>
+                    </div>
+
+                    <!-- Niveau d'urgence -->
+                    <div class="px-4 py-3">
+                        <label class="flex flex-col">
+                            <p class="text-[#111518] text-base font-medium leading-normal pb-2">Niveau d'Urgence</p>
+                            <select name="urgence_niveau" class="form-input w-48 rounded-lg border border-[#d0dee7] bg-white p-2">
+                                <option value="Faible">Faible</option>
+                                <option value="Modéré">Modéré</option>
+                                <option value="Élevé">Élevé</option>
+                                <option value="Urgent">Urgent</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <!-- Boutons d'action -->
+                    <div class="flex justify-end gap-3 px-4 py-3">
+                        <a href="{% url 'symptome' patient_social_security_number=patient.social_security_number %}" 
+                           class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#f0f3f4] text-[#111518] text-sm font-bold leading-normal tracking-[0.015em]">
+                            <span class="truncate">Annuler</span>
+                        </a>
+                        <button type="submit"
+                            class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#1993e5] text-white text-sm font-bold leading-normal tracking-[0.015em]">
+                            <span class="truncate">💾 Sauvegarder les Modifications</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Panel d'informations patient -->
+            <div class="layout-content-container flex flex-col w-[360px]">
+                <h2 class="text-[#111518] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Information Patient</h2>
+                <div class="p-4 grid grid-cols-[30%_1fr] gap-x-6">
+                    <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#d0dee7] py-5">
+                        <p class="text-[#637988] text-sm font-normal leading-normal">Patient</p>
+                        <p class="text-[#111518] text-sm font-normal leading-normal font-medium">{{ patient.first_name }} {{ patient.last_name }}</p>
+                    </div>
+                    <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#d0dee7] py-5">
+                        <p class="text-[#637988] text-sm font-normal leading-normal">Âge</p>
+                        <p class="text-[#111518] text-sm font-normal leading-normal">{% if patient.birth_date %}{{ patient.birth_date|age }} ans{% else %}Non spécifié{% endif %}</p>
+                    </div>
+                    <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#d0dee7] py-5">
+                        <p class="text-[#637988] text-sm font-normal leading-normal">Allergies</p>
+                        <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.allergies|default:"Aucune allergie connue" }}</p>
+                    </div>
+                    <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#d0dee7] py-5">
+                        <p class="text-[#637988] text-sm font-normal leading-normal">Antécédents</p>
+                        <p class="text-[#111518] text-sm font-normal leading-normal">{{ patient.diseases|default:"Aucun antécédent connu" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function ajouterMedicament() {
+            const container = document.getElementById('medicaments-container');
+            const nouveauMedicament = document.querySelector('.medicament-item').cloneNode(true);
+            
+            // Vider les valeurs des inputs
+            nouveauMedicament.querySelectorAll('input').forEach(input => input.value = '');
+            nouveauMedicament.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+            
+            container.appendChild(nouveauMedicament);
+        }
+
+        function supprimerMedicament(button) {
+            const container = document.getElementById('medicaments-container');
+            if (container.children.length > 1) {
+                button.closest('.medicament-item').remove();
+            } else {
+                alert('Vous devez avoir au moins un médicament dans l\'ordonnance.');
+            }
+        }
+    </script>
+</body>
+</html>

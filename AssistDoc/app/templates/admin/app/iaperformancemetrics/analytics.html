@@ -1,0 +1,299 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extrahead %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    .analytics-container {
+        padding: 20px;
+        background: #f8f9fa;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    
+    .stat-number {
+        font-size: 2.5em;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+    
+    .stat-label {
+        color: #666;
+        font-size: 0.9em;
+    }
+    
+    .positive { color: #28a745; }
+    .warning { color: #ffc107; }
+    .danger { color: #dc3545; }
+    .info { color: #17a2b8; }
+    
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .chart-container {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .chart-title {
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-bottom: 15px;
+        text-align: center;
+        color: #333;
+    }
+    
+    .learning-status {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-top: 20px;
+    }
+    
+    .progress-bar {
+        width: 100%;
+        height: 20px;
+        background-color: #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 10px 0;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #28a745, #20c997);
+        transition: width 0.3s ease;
+    }
+    
+    .section-title {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin: 30px 0 15px 0;
+        color: #333;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <h1>{{ title }}</h1>
+    <p style="color: #666; margin-bottom: 30px;">{{ subtitle }}</p>
+    
+    <!-- Statistiques principales -->
+    <div class="section-title">📊 Statistiques générales</div>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number positive">{{ total_feedbacks }}</div>
+            <div class="stat-label">Total des feedbacks</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number info">{{ feedbacks_aujourd_hui }}</div>
+            <div class="stat-label">Feedbacks aujourd'hui</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number positive">{{ avg_diagnostic }}/10</div>
+            <div class="stat-label">Score moyen diagnostic</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number positive">{{ avg_prescription }}/10</div>
+            <div class="stat-label">Score moyen prescription</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number info">{{ avg_satisfaction }}/10</div>
+            <div class="stat-label">Satisfaction patients</div>
+        </div>
+    </div>
+    
+    <!-- Graphiques principaux -->
+    <div class="section-title">📈 Évolution des performances (30 derniers jours)</div>
+    <div class="charts-grid">
+        <div class="chart-container">
+            <div class="chart-title">Taux de validation et modification</div>
+            <canvas id="performanceChart" width="400" height="200"></canvas>
+        </div>
+        <div class="chart-container">
+            <div class="chart-title">Scores de pertinence IA</div>
+            <canvas id="scoresChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+    
+    <!-- Graphiques de répartition -->
+    <div class="section-title">🔍 Analyse détaillée</div>
+    <div class="charts-grid">
+        <div class="chart-container">
+            <div class="chart-title">Répartition des types de feedback</div>
+            <canvas id="feedbackChart" width="300" height="300"></canvas>
+        </div>
+        <div class="chart-container">
+            <div class="chart-title">Efficacité des traitements</div>
+            <canvas id="efficaciteChart" width="300" height="300"></canvas>
+        </div>
+    </div>
+    
+    <!-- Statut d'apprentissage -->
+    <div class="section-title">🤖 Apprentissage automatique</div>
+    <div class="learning-status">
+        <h3>Données d'apprentissage disponibles</h3>
+        <p><strong>Total:</strong> {{ learning_data_count }} échantillons</p>
+        <p><strong>Utilisés pour l'entraînement:</strong> {{ learning_data_used }} échantillons</p>
+        <p><strong>En attente:</strong> {{ learning_data_pending }} échantillons</p>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: {% if learning_data_count > 0 %}{{ learning_data_used|floatformat:0 }}{% else %}0{% endif %}%"></div>
+        </div>
+        <p style="text-align: center; margin-top: 10px;">
+            {% if learning_data_count > 0 %}
+                {{ learning_data_used|floatformat:0 }}% des données utilisées
+            {% else %}
+                Aucune donnée disponible
+            {% endif %}
+        </p>
+        
+        {% if learning_data_pending > 0 %}
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 15px; margin-top: 15px;">
+            <strong>💡 Recommandation:</strong> {{ learning_data_pending }} nouveaux échantillons sont disponibles pour améliorer l'IA. 
+            Considérez lancer un cycle d'entraînement pour optimiser les performances.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Configuration des couleurs
+    const colors = {
+        primary: '#007bff',
+        success: '#28a745',
+        warning: '#ffc107',
+        danger: '#dc3545',
+        info: '#17a2b8'
+    };
+    
+    // Graphique de performance dans le temps
+    const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+    new Chart(performanceCtx, {
+        type: 'line',
+        data: {
+            labels: {{ dates_json|safe }},
+            datasets: [{
+                label: 'Taux validation directe (%)',
+                data: {{ taux_validation_json|safe }},
+                borderColor: colors.success,
+                backgroundColor: colors.success + '20',
+                tension: 0.4
+            }, {
+                label: 'Taux modification (%)',
+                data: {{ taux_modification_json|safe }},
+                borderColor: colors.warning,
+                backgroundColor: colors.warning + '20',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+    
+    // Graphique des scores
+    const scoresCtx = document.getElementById('scoresChart').getContext('2d');
+    new Chart(scoresCtx, {
+        type: 'line',
+        data: {
+            labels: {{ dates_json|safe }},
+            datasets: [{
+                label: 'Score diagnostic',
+                data: {{ scores_diagnostic_json|safe }},
+                borderColor: colors.primary,
+                backgroundColor: colors.primary + '20',
+                tension: 0.4
+            }, {
+                label: 'Score prescription',
+                data: {{ scores_prescription_json|safe }},
+                borderColor: colors.info,
+                backgroundColor: colors.info + '20',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 10
+                }
+            }
+        }
+    });
+    
+    // Graphique en donut pour les types de feedback
+    const feedbackCtx = document.getElementById('feedbackChart').getContext('2d');
+    new Chart(feedbackCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ feedback_labels_json|safe }},
+            datasets: [{
+                data: {{ feedback_counts_json|safe }},
+                backgroundColor: [colors.success, colors.warning, colors.danger]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+    
+    // Graphique pour l'efficacité des traitements
+    const efficaciteCtx = document.getElementById('efficaciteChart').getContext('2d');
+    new Chart(efficaciteCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ efficacite_labels_json|safe }},
+            datasets: [{
+                data: {{ efficacite_counts_json|safe }},
+                backgroundColor: [
+                    colors.success,
+                    '#90EE90',
+                    colors.warning,
+                    '#FFA500',
+                    colors.danger
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+});
+</script>
+{% endblock %}
